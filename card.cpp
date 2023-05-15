@@ -66,10 +66,13 @@ Obstacle::Obstacle() : skipTurn(0) {
 // Obstacle card class implementation
 Obstacle::Obstacle(bool skip) : skipTurn(skip) {
 	setDescription("Obstacle");
-	if (skipTurn)
-		setSpaces(1);
-	else
+	if (skipTurn) {
+		return;
+	}
+
+	else {
 		setSpaces(-3);
+	}
 }
 
 Obstacle::~Obstacle() {
@@ -78,10 +81,9 @@ Obstacle::~Obstacle() {
 
 
 void Obstacle::display() const {
-    Card::display();
     cout << "Obstacle: ";
     if (skipTurn) {
-        cout << "Skip your turn." << endl;
+        cout << "Skip your turn. Going to next player." << endl;
     } else {
         cout << "Move 3 spaces backward." << endl;
     }
@@ -94,7 +96,6 @@ bool Obstacle::getSkipTurn() {
 // Challenge card class constructor
 Challenge::Challenge() {
     setDescription("Challenge");
-    setSpaces(0);
 		
 		for (int i = 0; i < 100; i++) {
 			numbers[i] = rand() % 100 + 1;
@@ -103,6 +104,8 @@ Challenge::Challenge() {
   	int index2 = rand() % 100;
   	num1 = numbers[index1];
   	num2 = numbers[index2];    
+
+		// Handle spacing in game.cpp
 }
 
 Challenge::~Challenge() {
@@ -115,8 +118,7 @@ Challenge::~Challenge() {
 
 // Challenge card class implementation
 void Challenge::display() const {
-    Card::display();
-    cout << "Challenge: Calculate the sum of " << num1 << " + " << num2 << endl;
+	cout << "Challenge" << endl;
 }
 
 int Challenge::getNum1() {
@@ -127,9 +129,7 @@ int Challenge::getNum2() {
 	return num2;
 }
 
-Chance::Chance() : sides(0), forward(false) {
-
-}
+Chance::Chance() : sides(0), forward(false) {}
 
 Chance::~Chance() {
 	sides = 0;
@@ -138,13 +138,17 @@ Chance::~Chance() {
 
 // Chance card class constructor
 Chance::Chance(int sides) : sides(sides) {
-    setDescription("Chance");
     forward = flipCoin();
-    int rolledSpaces = rollDice(sides);
-		if (forward == false)
+    rolledSpaces = rollDice(sides);
+		
+	
+		if (forward == false) {
 			setSpaces(-rolledSpaces);
-		else
+		}
+
+		else {
 			setSpaces(rolledSpaces);
+		}
 }
 
 
@@ -164,11 +168,15 @@ bool Chance::flipCoin() {
 
 // Chance card class implementation
 void Chance::display() const {
-    Card::display();
-		if (forward)
-    	cout << "Chance: " << "Move forward " << spaces << " spaces." << endl;
-		else
-    	cout << "Chance: " << "Move backward " << spaces << " spaces." << endl;
+    cout << "Chance: Rolling a dice and flipping a coin. The dice decides the number of spaces to move and the coin decides whether to go forwards or backwards." << endl;
+
+		if (forward == false) {
+			cout << endl << "You got tails. Moving backwards " << rolledSpaces << " spaces." <<  endl; 
+		}
+
+		else {
+			cout << endl << "You got heads! Moving forwards " << rolledSpaces << " spaces." << endl; 
+		}
 }
 
 

@@ -15,6 +15,7 @@ public:
 private:
     int sides;
 		bool forward;
+		int rolledSpaces;
 };
 
 #endif // CHANCE_H

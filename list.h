@@ -48,7 +48,7 @@ public:
 private:
     Node<T>* head;
 
-    void insertRecursive(Node<T>* head, const T& data);
+    void insertRecursive(Node<T>*& head, const T& data);
     bool removeRecursive(Node<T>*& head, const T& data);
     T& retrieveRecursive(Node<T>* current, const T& data) const;
     void removeAllRecursive(Node<T>* head);

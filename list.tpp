@@ -50,6 +50,13 @@ LLL<T>::~LLL() {
 
 template <typename T>
 void LLL<T>::insert(const T& data) {
+/*
+		if (head == nullptr) {
+			head = new Node<T>(data); 
+			head->setNext(nullptr);
+			return;
+		}
+*/
     insertRecursive(head, data);
 }
 
@@ -75,12 +82,14 @@ void LLL<T>::display() const {
 }
 
 template <typename T>
-void LLL<T>::insertRecursive(Node<T>* head, const T& data) {
-    if (!head) {
-        head = new Node<T>(data);
+void LLL<T>::insertRecursive(Node<T>*& current, const T& data) {
+    if (!current) {
+			current = new Node<T>(data); 
     } else {
-        insertRecursive(head->getNext(), data);
-    }
+				Node<T>* nextNode = current->getNext();
+        insertRecursive(nextNode, data);
+				current->setNext(nextNode);
+    	}
 }
 
 template <typename T>
@@ -121,7 +130,7 @@ void LLL<T>::removeAllRecursive(Node<T>* head) {
 template <typename T>
 void LLL<T>::displayRecursive(Node<T>* head) const {
     if (head) {
-        cout << head->getData() << " ";
+        cout << *head->getData() << " ";
         displayRecursive(head->getNext());
     }
 }

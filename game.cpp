@@ -14,26 +14,25 @@ Game::~Game() {}
 
 // Initialize the game board (DLL)
 void Game::initGameBoard() {
-		int random_number = rand() % 3 + 1;
+		for (int i = 1; i <= pathSize; ++i) {
+			int random_number = rand() % 4 + 1;
+			bool skipTurn = false;
+			if (random_number == 1) {
+				skipTurn = true;	
+			}	
 
-    for (int i = 1; i <= pathSize; ++i) {
-        bool skipTurn = random_number % 3 == 0;
-        Position pos(i, skipTurn);
-        gameBoard.insert(pos);
-    }
+			Position pos(i, skipTurn);
+			gameBoard.insert(pos);
+		}
 }
 
 // Initialize the card stack (LLL)
 void Game::initCardStack() {
-		int skipped = rand() % 2 + 1;
-		bool isSkip;
-	 	if (skipped == 1)
-			isSkip = true;	
-		else
-			isSkip = false;
     for (int i = 1; i <= stackSize; ++i) {
 				int cardType = rand() % 3 + 1;
-        Card* card;
+				bool isSkip = rand() % 4 == 0;
+        
+				Card* card;
         switch (cardType) {
         case 1:
             card = new Obstacle(isSkip);
@@ -56,21 +55,25 @@ void Game::initCardStack() {
 
 // Play the game
 void Game::playGame() {
-    int numPlayers;
+		cout << "Card stack: " << endl;
+		cardStack.display();
+		cout << endl << "Game board: " << endl;
+		gameBoard.display();
+		int numPlayers;
     cout << "Enter the number of players: ";
     cin >> numPlayers;
 
     for (int i = 0; i < numPlayers; ++i) {
-        std::string playerName;
-        std::cout << "Enter the name of player " << i + 1 << ": ";
-        std::cin >> playerName;
+        string playerName;
+       	cout << "Enter the name of player " << i + 1 << ": ";
+        cin >> playerName;
         players.push_back(Player(playerName));
     }
 
     bool gameFinished = false;
     while (!gameFinished) {
         for (auto& player : players) {
-            cout << "It's " << player.getName() << "'s turn." << endl;
+            cout << endl << "It's " << player.getName() << "'s turn." << endl;
 						Position currentPosition;
 						try {
             	currentPosition = gameBoard.retrieveByIndex(player.getPosition());
@@ -79,8 +82,12 @@ void Game::playGame() {
 							cerr << "Error: " << e.what() << endl;	
 						}            
             if (currentPosition.getSkipTurn()) {
-                cout << "Oh no! You have to skip this turn." << endl;
+                cout << "Oh no! You have to skip this turn. Automatically moving forward 1 position." << endl;
+                cout << player.getName() << " is now at position " << player.getPosition() << "." << endl;
                 player.move(1);
+                if (player.getPosition() >= pathSize) {
+                	gameFinished = true;
+                  break;
             } else {
                 std::cout << "Enter 'd' to draw a card or 'q' to quit the game: ";
                 char choice;
@@ -97,25 +104,40 @@ void Game::playGame() {
     									cerr << "Error: No card was drawn" << endl;
 										}
 
-                    if (Obstacle* obsCard = dynamic_cast<Obstacle*>(drawnCard)) {
-                        if (obsCard->getSkipTurn()) {
-                            cout << "Your turn is skipped." << endl;
-                            player.move(1);
-                        } else {
-                            player.move(drawnCard->getSpaces());
-                        }
-                    } else if (Challenge* chCard = dynamic_cast<Challenge*>(drawnCard)) {
+                    if (Obstacle* obstacleCard = dynamic_cast<Obstacle*>(drawnCard)) {
+                        if (obstacleCard->getSkipTurn()) {
+                            cout << endl << "Your turn is skipped. Resting at current position." << endl;
+                        } else if (player.getPosition() - 3 < 0) {
+															cout << "Resetting position to 1 to avoid going negative." << endl;
+															player.setPosition(1);	
+												} else {
+                    				player.move(3);
+													}
+                    } else if (Challenge* challengeCard = dynamic_cast<Challenge*>(drawnCard)) {
                         int userAnswer;
-                        cout << "Enter the sum of " << chCard->getNum1() << " and " << chCard->getNum2() << ": ";
+                        cout << "Enter the sum of " << challengeCard->getNum1() << " and " << challengeCard->getNum2() << ": ";
                         cin >> userAnswer;
-                        if (userAnswer == chCard->getNum1() + chCard->getNum2()) {
+                        if (userAnswer == challengeCard->getNum1() + challengeCard->getNum2()) {
+														cout << "Correct! Moving forward 3 spaces. " << endl;
                             player.move(3);
                         } else {
-                            player.move(-1);
+														if (player.getPosition() == 0 || player.getPosition() == 1)
+														{
+															cout << "Incorrect. Staying at " << player.getPosition() << " position. " << endl;
+															player.move(0);	
+														}
+														else {
+															cout << "Incorrect. Moving 1 space back." << endl;
+                            	player.move(-1);
+														}
                         }
-                    } else if (Chance* chCard = dynamic_cast<Chance*>(drawnCard)) {
-                        player.move(drawnCard->getSpaces());
-                    }
+                    } else if (Chance* chanceCard = dynamic_cast<Chance*>(drawnCard)) {
+                       		player.move(drawnCard->getSpaces());
+													if (player.getPosition() < 0) {
+														cout << "Position reset to 1 to avoid going negative." << endl;
+														player.setPosition(1);
+													}
+												}
 
                     cout << player.getName() << " is now at position " << player.getPosition() << "." << endl;
                     if (player.getPosition() >= pathSize) {
@@ -142,7 +164,7 @@ void Game::playGame() {
 
     // Display the winner(s)
     if (winners.size() == 1) {
-        std::cout << "The winner is: " << winners[0] << std::endl;
+        cout << endl << "The winner is: " << winners[0] << endl;
     } else {
         cout << "It's a tie between: ";
         for (const auto& winner : winners) {
