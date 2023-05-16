@@ -85,14 +85,23 @@ void Game::playGame() {
         for (auto& player : players) {
             cout << endl << "It's " << player.getName() << "'s turn." << endl;
 
-						cout << "Rolling dice... ";	
-						int side = rand() % 6 + 1;
-						cout << " You rolled a " << side << "!" << endl;
-						player.move(side);
-						if (player.move(0) >= pathSize) {
-							cout << "We found a winner!" << endl;
+            cout << "Enter 'r' to roll the dice or 'q' to quit the game: ";
+            char roll;
+            cin >> roll;
+						if (roll == 'q') {
 							gameFinished = true;
 							break;	
+
+						} else if (roll == 'r') {
+								cout << "Rolling dice... ";	
+								int side = rand() % 6 + 1;
+								cout << " You rolled a " << side << "!" << endl;
+								player.move(side);
+								if (player.move(0) >= pathSize) {
+									cout << "We found a winner!" << endl;
+									gameFinished = true;
+									break;	
+								}
 						}
 
             cout << player.getName() << " is now at position " << player.move(0) << "." << endl;
@@ -135,6 +144,8 @@ void Game::playGame() {
 
 									}
 							}
+				}
+		}
 		
 		// Declare winner
     int maxPosition = 0;
@@ -151,7 +162,7 @@ void Game::playGame() {
 
     // Display the winner(s)
     if (winners.size() == 1) {
-        cout << endl << "The winner is: " << winners[0] << endl;
+        cout << endl << "The winner is " << winners[0] << " with " << maxPosition << " points!" << endl;
     } else {
         cout << "It's a tie between: ";
         for (const auto& winner : winners) {
@@ -159,8 +170,6 @@ void Game::playGame() {
         }
        	cout << endl;
     	}
-		}
-	}
 }
 
 

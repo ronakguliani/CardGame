@@ -1,3 +1,7 @@
+// Ronak Guliani
+// CS302
+// The purpose of the chance class is to represent a chance card in the game, as a card plus more. It provides a derived card class for methods for displaying an chance card and applying card effects.
+
 #ifndef CHANCE_H
 #define CHANCE_H
 

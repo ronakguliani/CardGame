@@ -1,3 +1,7 @@
+// Ronak Guliani
+// CS302
+// The purpose of the challenge class is to represent a challenge card in the game, as a card plus more. It provides a derived card class for methods for displaying an challenge card and applying card effects.
+
 #ifndef CHALLENGE_H
 #define CHALLENGE_H
 
@@ -11,8 +15,6 @@ public:
 		~Challenge();
     void display() const override;
 		void performAction(Player&, const Position&) override;
-		int getNum1();
-		int getNum2();
 
 private:
     array<int, 100> numbers;
