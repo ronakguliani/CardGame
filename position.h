@@ -1,3 +1,7 @@
+// Ronak Guliani
+// CS302
+// The purpose of the Position class is to represent a single position on the game board, with properties such as position number and skip turn status. It provides methods for getting and setting these properties, allowing the game to determine the effects of each position on the players as they move through the game.
+
 #ifndef POSITION_H
 #define POSITION_H
 #include <iostream>
@@ -5,22 +9,17 @@ using std::ostream;
 
 class Position {
 public:
-		Position() : index(0), skipTurn(false) {}
-    Position(int index, bool skipTurn) : index(index), skipTurn(skipTurn) {}
+		Position();
+    Position(int index, bool skipTurn);
 
-    int getIndex() const { return index; }
-    void setIndex(int newIndex) { index = newIndex; }
+    void setIndex(int newIndex);
 
-    bool getSkipTurn() const { return skipTurn; }
-    void setSkipTurn(bool newSkipTurn) { skipTurn = newSkipTurn; }
+    bool getSkipTurn() const;
+    void setSkipTurn(bool newSkipTurn);
     
-		friend bool operator==(const Position& lhs, const Position& rhs) { return lhs.index == rhs.index && lhs.skipTurn == rhs.skipTurn; }
+		friend bool operator==(const Position& lhs, const Position& rhs);
 
-    friend ostream& operator<<(ostream& os, const Position& pos) {
-	os << "(" << pos.index << ", " << (pos.skipTurn ? "skip" : "play") << ")";
-    return os;	
-		}
-
+    friend ostream& operator<<(ostream& os, const Position& pos);
 
 private:
     int index;

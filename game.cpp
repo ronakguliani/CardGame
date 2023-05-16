@@ -1,3 +1,5 @@
+// Ronak Guliani
+
 #include "game.h"
 #include <iostream>
 #include <random>
@@ -10,12 +12,17 @@ Game::Game(int pathSize, int stackSize)
 }
 
 // Destructor
-Game::~Game() {}
+Game::~Game() {
+	players.clear();
+	pathSize = 0;
+	stackSize = 0;
+
+}
 
 // Initialize the game board (DLL)
 void Game::initGameBoard() {
 		for (int i = 1; i <= pathSize; ++i) {
-			int random_number = rand() % 4 + 1;
+			int random_number = rand() % 3 + 1;
 			bool skipTurn = false;
 			if (random_number == 1) {
 				skipTurn = true;	
@@ -55,10 +62,13 @@ void Game::initCardStack() {
 
 // Play the game
 void Game::playGame() {
+		cout << "Display stack and board: " << endl;
 		cout << "Card stack: " << endl;
 		cardStack.display();
 		cout << endl << "Game board: " << endl;
 		gameBoard.display();
+		cout << endl << endl;
+
 		int numPlayers;
     cout << "Enter the number of players: ";
     cin >> numPlayers;
@@ -74,22 +84,33 @@ void Game::playGame() {
     while (!gameFinished) {
         for (auto& player : players) {
             cout << endl << "It's " << player.getName() << "'s turn." << endl;
+
+						cout << "Rolling dice... ";	
+						int side = rand() % 6 + 1;
+						cout << " You rolled a " << side << "!" << endl;
+						player.move(side);
+						if (player.move(0) >= pathSize) {
+							cout << "We found a winner!" << endl;
+							gameFinished = true;
+							break;	
+						}
+
+            cout << player.getName() << " is now at position " << player.move(0) << "." << endl;
+						cout << endl << "You are at a new position on the board! You will now be either drawing a card or skipping your turn..." << endl; 
+
 						Position currentPosition;
 						try {
-            	currentPosition = gameBoard.retrieveByIndex(player.getPosition());
+            	currentPosition = gameBoard.retrieveByIndex(player.move(0));
 
 						} catch (const out_of_range& e) {
-							cerr << "Error: " << e.what() << endl;	
+								cerr << "Error: " << e.what() << endl;	
 						}            
+
             if (currentPosition.getSkipTurn()) {
-                cout << "Oh no! You have to skip this turn. Automatically moving forward 1 position." << endl;
-                cout << player.getName() << " is now at position " << player.getPosition() << "." << endl;
-                player.move(1);
-                if (player.getPosition() >= pathSize) {
-                	gameFinished = true;
-                  break;
+                cout << "Oh no! You have to skip this turn. Moving to next player's turn." << endl;
+
             } else {
-                std::cout << "Enter 'd' to draw a card or 'q' to quit the game: ";
+                cout << "Enter 'd' to draw a card or 'q' to quit the game: ";
                 char choice;
                 cin >> choice;
 
@@ -101,63 +122,50 @@ void Game::playGame() {
 										if (drawnCard) {
     									drawnCard->display();
 										} else {
-    									cerr << "Error: No card was drawn" << endl;
+    									cerr << endl << "Error: No card was drawn" << endl;
 										}
 
                     if (Obstacle* obstacleCard = dynamic_cast<Obstacle*>(drawnCard)) {
                         if (obstacleCard->getSkipTurn()) {
-                            cout << endl << "Your turn is skipped. Resting at current position." << endl;
-                        } else if (player.getPosition() - 3 < 0) {
-															cout << "Resetting position to 1 to avoid going negative." << endl;
-															player.setPosition(1);	
+                            cout << endl << "You ran into an obstacle! Your turn is skipped. Resting at current position." << endl;
 												} else {
-                    				player.move(3);
+														cout << endl << "You ran into an obstacle! Moving backwards 3 spaces." << endl; 
+                    				player.move(-3);
 													}
                     } else if (Challenge* challengeCard = dynamic_cast<Challenge*>(drawnCard)) {
                         int userAnswer;
-                        cout << "Enter the sum of " << challengeCard->getNum1() << " and " << challengeCard->getNum2() << ": ";
+                        cout << endl << "Enter the sum of " << challengeCard->getNum1() << " and " << challengeCard->getNum2() << ": ";
                         cin >> userAnswer;
                         if (userAnswer == challengeCard->getNum1() + challengeCard->getNum2()) {
-														cout << "Correct! Moving forward 3 spaces. " << endl;
+														cout << endl << "Correct! Moving forward 3 spaces. " << endl;
                             player.move(3);
                         } else {
-														if (player.getPosition() == 0 || player.getPosition() == 1)
-														{
-															cout << "Incorrect. Staying at " << player.getPosition() << " position. " << endl;
-															player.move(0);	
-														}
-														else {
-															cout << "Incorrect. Moving 1 space back." << endl;
-                            	player.move(-1);
-														}
-                        }
+														cout << endl << "Incorrect. Moving 1 space backwards." << endl;
+                            player.move(-1);
+													}
                     } else if (Chance* chanceCard = dynamic_cast<Chance*>(drawnCard)) {
                        		player.move(drawnCard->getSpaces());
-													if (player.getPosition() < 0) {
-														cout << "Position reset to 1 to avoid going negative." << endl;
-														player.setPosition(1);
-													}
-												}
+											}
+										}
 
-                    cout << player.getName() << " is now at position " << player.getPosition() << "." << endl;
-                    if (player.getPosition() >= pathSize) {
+                    cout << player.getName() << " is now at position " << player.move(0) << "." << endl;
+                    if (player.move(0) >= pathSize) {
                         gameFinished = true;
                         break;
                     }
                 }
             }
         }
-    }
-
+		
 		// Declare winner
     int maxPosition = 0;
     vector<string> winners;
-    for (const auto& player : players) {
-        if (player.getPosition() > maxPosition) {
-            maxPosition = player.getPosition();
+    for (auto& player : players) {
+        if (player.move(0) > maxPosition) {
+            maxPosition = player.move(0);
             winners.clear();
             winners.push_back(player.getName());
-        } else if (player.getPosition() == maxPosition) {
+        } else if (player.move(0) == maxPosition) {
             winners.push_back(player.getName());
         }
     }
@@ -170,8 +178,8 @@ void Game::playGame() {
         for (const auto& winner : winners) {
             cout << winner << " ";
         }
-        cout << endl;
-    }
+       	cout << endl;
+    	}
 }
 
 

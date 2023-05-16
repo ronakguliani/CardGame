@@ -65,7 +65,7 @@ Obstacle::Obstacle() : skipTurn(0) {
 
 // Obstacle card class implementation
 Obstacle::Obstacle(bool skip) : skipTurn(skip) {
-	setDescription("Obstacle");
+	setDescription("Obstacle: You will either lose your turn or move 3 spaces backwards.");
 	if (skipTurn) {
 		return;
 	}
@@ -81,12 +81,7 @@ Obstacle::~Obstacle() {
 
 
 void Obstacle::display() const {
-    cout << "Obstacle: ";
-    if (skipTurn) {
-        cout << "Skip your turn. Going to next player." << endl;
-    } else {
-        cout << "Move 3 spaces backward." << endl;
-    }
+		cout << description << endl;
 }
 
 bool Obstacle::getSkipTurn() {
@@ -95,7 +90,7 @@ bool Obstacle::getSkipTurn() {
 
 // Challenge card class constructor
 Challenge::Challenge() {
-    setDescription("Challenge");
+    setDescription("Challenge: You will be solving a math problem. Answering correctly will result in moving forward 3 spaces. Answering incorrectly will move backwards 1 space.");
 		
 		for (int i = 0; i < 100; i++) {
 			numbers[i] = rand() % 100 + 1;
@@ -104,8 +99,6 @@ Challenge::Challenge() {
   	int index2 = rand() % 100;
   	num1 = numbers[index1];
   	num2 = numbers[index2];    
-
-		// Handle spacing in game.cpp
 }
 
 Challenge::~Challenge() {
@@ -118,7 +111,7 @@ Challenge::~Challenge() {
 
 // Challenge card class implementation
 void Challenge::display() const {
-	cout << "Challenge" << endl;
+	cout << description << endl;
 }
 
 int Challenge::getNum1() {
@@ -138,6 +131,7 @@ Chance::~Chance() {
 
 // Chance card class constructor
 Chance::Chance(int sides) : sides(sides) {
+		setDescription("Chance: Rolling a dice and flipping a coin. The dice decides the number of spaces to move and the coin decides whether to go forwards or backwards.");
     forward = flipCoin();
     rolledSpaces = rollDice(sides);
 		
@@ -168,7 +162,7 @@ bool Chance::flipCoin() {
 
 // Chance card class implementation
 void Chance::display() const {
-    cout << "Chance: Rolling a dice and flipping a coin. The dice decides the number of spaces to move and the coin decides whether to go forwards or backwards." << endl;
+		cout << description << endl;
 
 		if (forward == false) {
 			cout << endl << "You got tails. Moving backwards " << rolledSpaces << " spaces." <<  endl; 

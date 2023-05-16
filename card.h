@@ -1,3 +1,7 @@
+// Ronak Guliani
+// CS302
+// The purpose of the Card class is to represent a single card in the game, with different types of cards such as Obstacle, Challenge, and Chance. It provides a base class for these specialized cards and contains methods for displaying card information and applying card effects on the players.
+
 #ifndef CARD_H
 #define CARD_H
 

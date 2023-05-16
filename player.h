@@ -11,10 +11,9 @@ public:
     string getName() const;
     void setName(const string& name);
 
-    int getPosition() const;
     void setPosition(int position);
 
-    void move(int steps);
+    int move(int steps);
 
 private:
     string name;
