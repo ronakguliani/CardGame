@@ -4,21 +4,33 @@
 #include "obstacle.h"
 #include "chance.h"
 #include "challenge.h"
+#include "cstring"
 #include <iostream>
 #include <random>
 using namespace std;
 
 // Constructor for Card class
-Card::Card() : spaces(0), description("") {}
+Card::Card() : spaces(0), description(nullptr) {}
+
+Card::Card(int spaces, char * description) {
+	this->spaces = spaces;
+	setDescription(description);
+}
+
+Card::Card(const Card& src) : spaces(src.spaces), description(nullptr) {
+	if (src.description != nullptr) {
+		this->description = new char[strlen(src.description) + 1];
+		strcpy(this->description, src.description);	
+	}	
+
+	else
+		this->description = nullptr;
+}
 
 Card::~Card() {
 	spaces = 0;
-	description = "";	
-}
-
-// Getter for spaces
-int Card::getSpaces() const {
-    return spaces;
+	if (description != nullptr)
+		delete [] description;
 }
 
 // Setter for spaces
@@ -27,8 +39,12 @@ void Card::setSpaces(int s) {
 }
 
 // Setter for description
-void Card::setDescription(const string& desc) {
-    description = desc;
+void Card::setDescription(char * desc) {
+	if (description)
+		delete [] description;
+
+	this->description = new char[strlen(desc) + 1];
+	strcpy(this->description, desc);
 }
 
 // Display function for Card class
@@ -45,11 +61,17 @@ ostream& operator<<(ostream& os, const Card& card) {
 }
 
 // Overloaded = operator
-Card& Card::operator=(const Card& rhs) {
-    if (this != &rhs) {
-        spaces = rhs.spaces;
-        description = rhs.description;
-    }
+Card& Card::operator=(const Card& src) {
+		if (this == &src)
+			return *this;
+
+		if (description)
+			delete [] description;
+
+		description = new char[strlen(src.description) + 1];
+		strcpy(description, src.description);
+
+		spaces = src.spaces;
     return *this;
 }
 
@@ -63,13 +85,12 @@ bool Card::operator!=(const Card& rhs) const {
     return !(*this == rhs);
 }
 
-Obstacle::Obstacle() : skipTurn(0) {
-	setDescription("Obstacle");
-}
+Obstacle::Obstacle() : skipTurn(0) {}
 
 // Obstacle card class implementation
 Obstacle::Obstacle(bool skip) : skipTurn(skip) {
-	setDescription("Obstacle: You will either lose your turn or move 3 spaces backwards.");
+	char newObstacle[] = "Obstacle: You will either lose your turn or move 3 spaces backwards.";
+	setDescription(newObstacle);
 	if (skipTurn) {
 		return;
 	}
@@ -92,6 +113,10 @@ bool Obstacle::getSkipTurn() {
 	return skipTurn;
 }
 
+void Obstacle::setSkipTurn(bool skip) {
+	skipTurn = skip;
+} 
+
 void Obstacle::performAction(Player& player, const Position &currentPosition) {
 	if (currentPosition.isSkipped()) {
 		cout << "You ran into an obstacle! Your turn is skipped. Resting at current position." << endl;	
@@ -106,7 +131,8 @@ void Obstacle::performAction(Player& player, const Position &currentPosition) {
 
 // Challenge card class constructor
 Challenge::Challenge() {
-    setDescription("Challenge: You will be solving a math problem. Answering correctly will result in moving forward 3 spaces. Answering incorrectly will move backwards 1 space.");
+		char newChallenge[] = "Challenge: You will be solving a math problem. Answering correctly will result in moving forward 3 spaces. Answering incorrectly will move backwards 1 space.";
+    setDescription(newChallenge);
 		
 		for (int i = 0; i < 100; i++) {
 			numbers[i] = rand() % 100 + 1;
@@ -128,14 +154,6 @@ Challenge::~Challenge() {
 // Challenge card class implementation
 void Challenge::display() const {
 	cout << description << endl << endl;
-}
-
-int Challenge::getNum1() {
-	return num1;
-}
-
-int Challenge::getNum2() {
-	return num2;
 }
 
 Chance::Chance() : sides(0), forward(false) {}
@@ -166,7 +184,8 @@ void Challenge::performAction(Player& player, const Position& currentPosition) {
 
 // Chance card class constructor
 Chance::Chance(int sides) : sides(sides) {
-		setDescription("Chance: Rolling a dice and flipping a coin. The dice decides the number of spaces to move and the coin decides whether to go forwards or backwards.");
+		char newChance[] = "Chance: Rolling a dice and flipping a coin. The dice decides the number of spaces to move and the coin decides whether to go forwards or backwards.";
+		setDescription(newChance);
     forward = flipCoin();
     rolledSpaces = rollDice(sides);
 		

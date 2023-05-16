@@ -1,3 +1,5 @@
+// Ronak Guliani
+
 #ifndef LIST_H
 #define LIST_H
 
@@ -7,6 +9,7 @@ template <typename T>
 class Node {
 public:
     Node(const T& data);
+		~Node();
     T& getData();
 		const T& getData() const;
     void setData(const T& data);
@@ -51,7 +54,7 @@ private:
     void insertRecursive(Node<T>*& head, const T& data);
     bool removeRecursive(Node<T>*& head, const T& data);
     T& retrieveRecursive(Node<T>* current, const T& data) const;
-    void removeAllRecursive(Node<T>* head);
+    void removeAllRecursive(Node<T>*& head);
     void displayRecursive(Node<T>* head) const;
 		int lengthRecursive(Node<T>* current) const;
 		T getRandomCardRecursive(Node<T>* current, int index, int counter);

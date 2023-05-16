@@ -11,6 +11,7 @@ class Position {
 public:
 		Position();
     Position(int index, bool skipTurn);
+		~Position();
 
     void setIndex(int newIndex);
 

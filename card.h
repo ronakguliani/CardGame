@@ -14,12 +14,14 @@ using namespace std;
 class Card {
 public:
     Card();
+		Card(const Card& src);
+		Card(int spaces, char * description);
 		virtual ~Card();
-    void setDescription(const string& description);
+		Card& operator=(const Card& card);
+    void setDescription(char* description);
     string getDescription() const;
 
     void setSpaces(int spaces);
-		int getSpaces() const;
 
 		virtual void performAction(Player& player, const Position& currentPosition); 
 
@@ -27,13 +29,12 @@ public:
 
     friend ostream& operator<<(ostream& os, const Card& card);
 
-    Card& operator=(const Card& other);
     bool operator==(const Card& other) const;
     bool operator!=(const Card& other) const;
 
 protected:
     int spaces;
-    string description;
+    char* description;
 };
 
 #endif // CARD_H

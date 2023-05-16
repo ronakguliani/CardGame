@@ -1,8 +1,30 @@
+// Ronak Guliani
+#include <type_traits>
+
 using namespace std;
 
 // Node implementation
 template <typename T>
 Node<T>::Node(const T& data) : data(data), next(nullptr), prev(nullptr) {}
+
+// Node destructor
+template <typename T>
+Node<T>::~Node() {
+	if (next) {
+		delete next;
+	}
+
+	if constexpr(is_pointer<T>::value)
+		// check if last node in list
+		if (data && next) {
+			delete data;
+		}
+		else
+			data = nullptr;
+
+	next = nullptr;
+	prev = nullptr;
+}
 
 template <typename T>
 T& Node<T>::getData() {
@@ -73,6 +95,7 @@ T& LLL<T>::retrieve(const T& data) const {
 template <typename T>
 void LLL<T>::removeAll() {
     removeAllRecursive(head);
+		head = nullptr;
 }
 
 template <typename T>
@@ -119,9 +142,10 @@ T& LLL<T>::retrieveRecursive(Node<T>* current, const T& data) const {
 }
 
 template <typename T>
-void LLL<T>::removeAllRecursive(Node<T>* head) {
+void LLL<T>::removeAllRecursive(Node<T>*& head) {
     if (head) {
-        removeAllRecursive(head->getNext());
+				Node<T>* next = head->getNext();
+        removeAllRecursive(next);
         delete head;
         head = nullptr;
     }
@@ -216,6 +240,8 @@ T& DLL<T>::retrieveByIndexRecursive(Node<T>* current, int index) const {
 template <typename T>
 void DLL<T>::removeAll() {
     removeAllRecursive(head, tail);
+		head = nullptr;
+		tail = nullptr;
 }
 
 template <typename T>
@@ -269,7 +295,7 @@ T& DLL<T>::retrieveRecursive(Node<T>* current, const T& data) const {
 
 template <typename T>
 void DLL<T>::removeAllRecursive(Node<T>*& head, Node<T>*& tail) {
-    if (head != nullptr) {
+    if (head) {
         Node<T>* next = head->getNext();
         if (head == tail) {
             tail = nullptr;
