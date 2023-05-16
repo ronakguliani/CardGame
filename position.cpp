@@ -9,7 +9,7 @@ void Position::setIndex(int newIndex) {
 	index = newIndex;
 }
 
-bool Position::getSkipTurn() const {
+bool Position::isSkipped() const {
 	return skipTurn;
 }
 

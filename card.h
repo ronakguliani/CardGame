@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <string>
+#include "player.h"
+#include "position.h"
 using namespace std;
 
 class Card {
@@ -15,8 +17,12 @@ public:
 		virtual ~Card();
     void setDescription(const string& description);
     string getDescription() const;
+
     void setSpaces(int spaces);
-    int getSpaces() const;
+		int getSpaces() const;
+
+		virtual void performAction(Player& player, const Position& currentPosition); 
+
     virtual void display() const;
 
     friend ostream& operator<<(ostream& os, const Card& card);

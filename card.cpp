@@ -34,6 +34,8 @@ void Card::display() const {
     cout << description << endl;
 }
 
+void Card::performAction(Player& player, const Position& currentPosition) {} 
+
 // Overloaded << operator
 ostream& operator<<(ostream& os, const Card& card) {
     os << card.description;
@@ -81,12 +83,24 @@ Obstacle::~Obstacle() {
 
 
 void Obstacle::display() const {
-		cout << description << endl;
+		cout << description << endl << endl;
 }
 
 bool Obstacle::getSkipTurn() {
 	return skipTurn;
 }
+
+void Obstacle::performAction(Player& player, const Position &currentPosition) {
+	if (currentPosition.isSkipped()) {
+		cout << "You ran into an obstacle! Your turn is skipped. Resting at current position." << endl;	
+	}
+	else {
+		cout << endl << "You ran into an obstacle! Moving backwards 3 spaces." << endl;
+		player.move(-3);	
+	}
+}
+
+
 
 // Challenge card class constructor
 Challenge::Challenge() {
@@ -111,7 +125,7 @@ Challenge::~Challenge() {
 
 // Challenge card class implementation
 void Challenge::display() const {
-	cout << description << endl;
+	cout << description << endl << endl;
 }
 
 int Challenge::getNum1() {
@@ -128,6 +142,25 @@ Chance::~Chance() {
 	sides = 0;
 	forward = false;
 }
+
+void Challenge::performAction(Player& player, const Position& currentPosition) {
+    if (currentPosition.isSkipped()) {
+        cout << "Oh no! You have to skip this turn due to the position. Moving to next player's turn." << std::endl;
+        return;
+    }
+
+    int userAnswer;
+   	cout << "Enter the sum of " << num1 << " and " << num2 << ": ";
+    cin >> userAnswer;
+    if (userAnswer == num1 + num2) {
+        cout << "Correct! Moving forward 3 spaces. " << endl;
+        player.move(3);
+    } else {
+        cout << "Incorrect. Moving 1 space back." << endl;
+        player.move(-1);
+    }
+}
+
 
 // Chance card class constructor
 Chance::Chance(int sides) : sides(sides) {
@@ -146,6 +179,10 @@ Chance::Chance(int sides) : sides(sides) {
 }
 
 
+void Chance::performAction(Player& player, const Position& currentPosition) {
+	player.move(spaces);
+}
+
 
 int Chance::rollDice(int sides) {
 	return rand() % sides + 1;
@@ -162,7 +199,7 @@ bool Chance::flipCoin() {
 
 // Chance card class implementation
 void Chance::display() const {
-		cout << description << endl;
+		cout << description << endl << endl;
 
 		if (forward == false) {
 			cout << endl << "You got tails. Moving backwards " << rolledSpaces << " spaces." <<  endl; 

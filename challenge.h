@@ -10,6 +10,7 @@ public:
     Challenge();
 		~Challenge();
     void display() const override;
+		void performAction(Player&, const Position&) override;
 		int getNum1();
 		int getNum2();
 

@@ -2,6 +2,8 @@
 #define CHANCE_H
 
 #include "card.h"
+#include "player.h"
+#include "position.h"
 
 class Chance : public Card {
 public:
@@ -9,6 +11,7 @@ public:
     Chance(int sides);
 		~Chance();
     void display() const override;
+		void performAction(Player&, const Position&) override;
     int rollDice(int);
     bool flipCoin();
 

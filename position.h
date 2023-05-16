@@ -14,7 +14,7 @@ public:
 
     void setIndex(int newIndex);
 
-    bool getSkipTurn() const;
+    bool isSkipped() const;
     void setSkipTurn(bool newSkipTurn);
     
 		friend bool operator==(const Position& lhs, const Position& rhs);

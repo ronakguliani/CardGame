@@ -106,7 +106,7 @@ void Game::playGame() {
 								cerr << "Error: " << e.what() << endl;	
 						}            
 
-            if (currentPosition.getSkipTurn()) {
+            if (currentPosition.isSkipped()) {
                 cout << "Oh no! You have to skip this turn. Moving to next player's turn." << endl;
 
             } else {
@@ -125,37 +125,16 @@ void Game::playGame() {
     									cerr << endl << "Error: No card was drawn" << endl;
 										}
 
-                    if (Obstacle* obstacleCard = dynamic_cast<Obstacle*>(drawnCard)) {
-                        if (obstacleCard->getSkipTurn()) {
-                            cout << endl << "You ran into an obstacle! Your turn is skipped. Resting at current position." << endl;
-												} else {
-														cout << endl << "You ran into an obstacle! Moving backwards 3 spaces." << endl; 
-                    				player.move(-3);
-													}
-                    } else if (Challenge* challengeCard = dynamic_cast<Challenge*>(drawnCard)) {
-                        int userAnswer;
-                        cout << endl << "Enter the sum of " << challengeCard->getNum1() << " and " << challengeCard->getNum2() << ": ";
-                        cin >> userAnswer;
-                        if (userAnswer == challengeCard->getNum1() + challengeCard->getNum2()) {
-														cout << endl << "Correct! Moving forward 3 spaces. " << endl;
-                            player.move(3);
-                        } else {
-														cout << endl << "Incorrect. Moving 1 space backwards." << endl;
-                            player.move(-1);
-													}
-                    } else if (Chance* chanceCard = dynamic_cast<Chance*>(drawnCard)) {
-                       		player.move(drawnCard->getSpaces());
-											}
-										}
+										drawnCard->performAction(player, currentPosition);
 
                     cout << player.getName() << " is now at position " << player.move(0) << "." << endl;
                     if (player.move(0) >= pathSize) {
                         gameFinished = true;
                         break;
                     }
-                }
-            }
-        }
+
+									}
+							}
 		
 		// Declare winner
     int maxPosition = 0;
@@ -180,6 +159,8 @@ void Game::playGame() {
         }
        	cout << endl;
     	}
+		}
+	}
 }
 
 
