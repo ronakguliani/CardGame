@@ -10,17 +10,11 @@ Node<T>::Node(const T& data) : data(data), next(nullptr), prev(nullptr) {}
 // Node destructor
 template <typename T>
 Node<T>::~Node() {
-	if (next) {
-		delete next;
-	}
 
+	// Check if T is a pointer
 	if constexpr(is_pointer<T>::value)
-		// check if last node in list
-		if (data && next) {
+		if (data)
 			delete data;
-		}
-		else
-			data = nullptr;
 
 	next = nullptr;
 	prev = nullptr;

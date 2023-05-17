@@ -192,7 +192,7 @@ void Game::playGame() {
 
     // Display the winner(s)
     if (winners.size() == 1) {
-        cout << endl << "The winner is " << winners[0] << " with " << maxPosition << " points!" << endl;
+        cout << endl << "The winner is " << winners[0] << ", with " << maxPosition << " points!" << endl;
     } else {
         cout << "It's a tie between: ";
         for (const auto& winner : winners) {

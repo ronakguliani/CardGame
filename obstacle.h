@@ -14,7 +14,6 @@ public:
 		~Obstacle();
     void display() const override;
 		void setSkipTurn(bool);
-		bool getSkipTurn();
 		void performAction(Player& player, const Position& currentPosition) override;
 
 private:

@@ -108,10 +108,11 @@ Obstacle::~Obstacle() {
 void Obstacle::display() const {
 		cout << description << endl << endl;
 }
-
+/*
 bool Obstacle::getSkipTurn() {
 	return skipTurn;
 }
+*/
 
 void Obstacle::setSkipTurn(bool skip) {
 	skipTurn = skip;
