@@ -4,6 +4,8 @@
 using namespace std;
 
 // Node implementation
+
+// Default constructor
 template <typename T>
 Node<T>::Node(const T& data) : data(data), next(nullptr), prev(nullptr) {}
 
@@ -64,6 +66,57 @@ LLL<T>::~LLL() {
     removeAll();
 }
 
+
+template <typename T>
+LLL<T>& LLL<T>::operator= (const LLL<T>& other) {
+	if (this != &other) {
+		removeAll();
+		copyRecursive(head, other.head);
+	}
+	return *this;
+}
+
+template <typename T>
+void LLL<T>::copyRecursive(Node<T>*& current, const Node<T>* otherCurrent) {
+    if (otherCurrent != nullptr) {
+        insert(otherCurrent->getData());
+        copyRecursive(current->getNext(), otherCurrent->getNext());
+    }
+}
+
+
+template <typename T>
+LLL<T>& LLL<T>::operator+=(const LLL<T>& other) {
+    appendRecursive(head, other.head);
+		return *this;
+}
+
+template <typename T>
+void LLL<T>::appendRecursive(Node<T>*& current, const Node<T>* otherCurrent) {
+    if (otherCurrent != nullptr) {
+        insert(otherCurrent->getData());
+        appendRecursive(current->getNext(), otherCurrent->getNext());
+    }
+}
+
+// Insert new node to a new list and return it
+template <typename T>
+LLL<T> LLL<T>::operator+(const T& data) const {
+    LLL<T> newList = *this;
+    newList.insert(data);
+    return newList;
+}
+
+template <typename T>
+LLL<T> LLL<T>::operator+(const LLL<T>& other) const {
+    LLL<T> newList;
+    newList += *this;
+    newList += other;
+    return newList;
+}
+
+
+// Insert data to list
 template <typename T>
 void LLL<T>::insert(const T& data) {
 /*
@@ -148,23 +201,28 @@ void LLL<T>::removeAllRecursive(Node<T>*& head) {
 template <typename T>
 void LLL<T>::displayRecursive(Node<T>* head) const {
     if (head) {
-        cout << *head->getData() << " ";
+        cout << *head->getData() << endl;
         displayRecursive(head->getNext());
     }
 }
 
+// Get a random card from the list
 template <typename T>
 T LLL<T>::getRandomCard() {
     if (!head) {
-        return static_cast<T>(nullptr); // Cast nullptr to the correct pointer type
+			throw runtime_error("List is empty, cannot get a random card");
     }
 
     int index = rand() % length() + 1;
-    return getRandomCardRecursive(head, index, 1); // Call the helper function with the starting node, index, and counter
+    return getRandomCardRecursive(head, index, 1);
 }
 
 template <typename T>
 T LLL<T>::getRandomCardRecursive(Node<T>* current, int index, int counter) {
+		if (!current) {
+        throw runtime_error("Unexpected end of list encountered");
+		}
+
     if (counter == index) {
         return current->getData();
     }
@@ -278,7 +336,7 @@ bool DLL<T>::removeRecursive(Node<T>* head, Node<T>*& tail, const T& data) {
 template <typename T>
 T& DLL<T>::retrieveRecursive(Node<T>* current, const T& data) const {
     if (current == nullptr) {
-        throw std::out_of_range("Data not found");
+        throw out_of_range("Data not found");
     }
     if (current->getData() == data) {
         return current->getData();
@@ -300,11 +358,58 @@ void DLL<T>::removeAllRecursive(Node<T>*& head, Node<T>*& tail) {
     }
 }
 
+template <typename T>
+DLL<T> DLL<T>::operator+(const T& data) const {
+    DLL<T> newList = *this;
+    newList.insert(data);
+    return newList;
+}
+
+template <typename T>
+DLL<T> DLL<T>::operator+(const DLL<T>& other) const {
+    DLL<T> newList;
+    newList += *this;
+    newList += other;
+    return newList;
+}
+
+template <typename T>
+DLL<T>& DLL<T>::operator=(const DLL<T>& other) {
+    if (this != &other) {
+        removeAll();
+        copyRecursive(head, tail, other.head);
+    }
+    return *this;
+}
+
+template <typename T>
+void DLL<T>::copyRecursive(Node<T>*& currentHead, Node<T>*& currentTail, const Node<T>* otherCurrent) {
+    if (otherCurrent != nullptr) {
+        insert(otherCurrent->getData());
+        copyRecursive(currentHead->getNext(), currentTail, otherCurrent->getNext());
+    }
+}
+
+
+template <typename T>
+DLL<T>& DLL<T>::operator+=(const DLL<T>& other) {
+    appendRecursive(head, tail, other.head);
+		return *this;
+}
+
+
+template <typename T>
+void DLL<T>::appendRecursive(Node<T>*& currentHead, Node<T>*& currentTail, const Node<T>* otherCurrent) {
+    if (otherCurrent != nullptr) {
+        insert(otherCurrent->getData());
+        appendRecursive(currentHead->getNext(), currentTail, otherCurrent->getNext());
+    }
+}
 
 template <typename T>
 void DLL<T>::displayRecursive(Node<T>* head) const {
     if (head) {
-        cout << head->getData() << " ";
+        cout << head->getData() << endl;
         displayRecursive(head->getNext());
     }
 }

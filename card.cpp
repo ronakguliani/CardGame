@@ -188,12 +188,13 @@ void Challenge::display() const {
 
 bool Challenge::performAction(Player& player, const Position& currentPosition) {
     if (currentPosition.isSkipped()) {
-        cout << "Oh no! You have to skip this turn due to the position. Moving to next player's turn." << std::endl;
+        cout << "Oh no! You have to skip this turn due to the position. Moving to next player's turn." << endl;
 				return true;
     }
 
+   	cout << "Enter the sum of " << num1 << " and " << num2 << ". ";
 		char userChoice;
-    cout << "Would you like a hint? Enter 'Y' for yes or 'N' for no: ";
+    cout << endl << "Would you like a hint? Enter 'Y' for yes or 'N' for no: ";
     cin >> userChoice;
 
     if (toupper(userChoice) == 'Y') {
@@ -201,7 +202,7 @@ bool Challenge::performAction(Player& player, const Position& currentPosition) {
     }
 
     int userAnswer;
-   	cout << "Enter the sum of " << num1 << " and " << num2 << ": ";
+		cout << "Enter sum: "; 
     cin >> userAnswer;
     if (userAnswer == num1 + num2) {
         cout << "Correct! Moving forward 3 spaces. " << endl;

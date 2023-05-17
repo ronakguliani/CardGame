@@ -21,7 +21,7 @@ public:
 		Game(int, int);
     ~Game();
 
-    void playGame();
+    bool playGame();
 
 private:
     void initGameBoard();

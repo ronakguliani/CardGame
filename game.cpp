@@ -52,7 +52,7 @@ Game::~Game() {
 // Initialize the game board (DLL)
 void Game::initGameBoard() {
 		for (int i = 1; i <= pathSize; ++i) {
-			int random_number = rand() % 3 + 1;
+			int random_number = rand() % 4 + 1;
 			bool skipTurn = false;
 			if (random_number == 1) {
 				skipTurn = true;	
@@ -91,11 +91,19 @@ void Game::initCardStack() {
 }
 
 // Play the game
-void Game::playGame() {
+bool Game::playGame() {
+		// cout << "DISPLAY STACK" << endl;
+		// cardStack.display();
+		
+		// cout << "DISPLAY BOARD" << endl;
+		// gameBoard.display();	
+	
+		// Prompt user for number of players playing game
 		int numPlayers;
     cout << "Enter the number of players: ";
     cin >> numPlayers;
 
+		// Get names of each player
     for (int i = 0; i < numPlayers; ++i) {
         string playerName;
        	cout << "Enter the name of player " << i + 1 << ": ";
@@ -150,12 +158,19 @@ void Game::playGame() {
                     gameFinished = true;
                     break;
                 } else if (choice == 'd') {
-                    Card * drawnCard = cardStack.getRandomCard();
-										if (drawnCard) {
-    									drawnCard->display();
-										} else {
-    									cerr << endl << "Error: No card was drawn" << endl;
+										Card * drawnCard = nullptr;
+										try {
+                    	drawnCard = cardStack.getRandomCard();
+											if (drawnCard) {
+    										drawnCard->display();
+											} else {
+    											cerr << endl << "Error: No card was drawn" << endl;
+												}
 										}
+
+										catch (const exception& e) {
+        							cerr << "Error: " << e.what() << endl;
+    								}
 
 										bool performed = drawnCard->performAction(player, currentPosition);
 
@@ -175,7 +190,7 @@ void Game::playGame() {
 				}
 		}
 		
-		// Declare winner
+		// Find winner(s)
     int maxPosition = 0;
     vector<string> winners;
     for (auto& player : players) {
@@ -188,7 +203,7 @@ void Game::playGame() {
         }
     }
 
-    // Display the winner(s)
+    // Display the winner(s). There may be multiple winners if the user ends the game before path size is reached
     if (winners.size() == 1) {
         cout << endl << "The winner is " << winners[0] << ", with " << maxPosition << " points!" << endl;
     } else {
@@ -198,6 +213,7 @@ void Game::playGame() {
         }
        	cout << endl;
     	}
+	return true;
 }
 
 
