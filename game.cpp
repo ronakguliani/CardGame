@@ -92,13 +92,6 @@ void Game::initCardStack() {
 
 // Play the game
 void Game::playGame() {
-		cout << "Display stack and board: " << endl;
-		cout << "Card stack: " << endl;
-		cardStack.display();
-		cout << endl << "Game board: " << endl;
-		gameBoard.display();
-		cout << endl << endl;
-
 		int numPlayers;
     cout << "Enter the number of players: ";
     cin >> numPlayers;
@@ -164,7 +157,12 @@ void Game::playGame() {
     									cerr << endl << "Error: No card was drawn" << endl;
 										}
 
-										drawnCard->performAction(player, currentPosition);
+										bool performed = drawnCard->performAction(player, currentPosition);
+
+										if (!performed)
+										{
+											cout << "Unable to perform action. " << endl;	
+										}
 
                     cout << player.getName() << " is now at position " << player.move(0) << "." << endl;
                     if (player.move(0) >= pathSize) {

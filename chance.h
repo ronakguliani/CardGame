@@ -15,7 +15,7 @@ public:
     Chance(int sides);
 		~Chance();
     void display() const override;
-		void performAction(Player&, const Position&) override;
+		bool performAction(Player&, const Position&) override;
     int rollDice(int);
     bool flipCoin();
 

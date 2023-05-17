@@ -52,11 +52,13 @@ void Card::display() const {
     cout << description << endl;
 }
 
-void Card::performAction(Player& player, const Position& currentPosition) {} 
+bool Card::performAction(Player& player, const Position& currentPosition) {
+	return true;
+} 
 
 // Overloaded << operator
 ostream& operator<<(ostream& os, const Card& card) {
-    os << card.description;
+    os << "Description: " << card.description;
     return os;
 }
 
@@ -108,17 +110,12 @@ Obstacle::~Obstacle() {
 void Obstacle::display() const {
 		cout << description << endl << endl;
 }
-/*
-bool Obstacle::getSkipTurn() {
-	return skipTurn;
-}
-*/
 
 void Obstacle::setSkipTurn(bool skip) {
 	skipTurn = skip;
 } 
 
-void Obstacle::performAction(Player& player, const Position &currentPosition) {
+bool Obstacle::performAction(Player& player, const Position &currentPosition) {
 	if (currentPosition.isSkipped()) {
 		cout << "You ran into an obstacle! Your turn is skipped. Resting at current position." << endl;	
 	}
@@ -126,6 +123,8 @@ void Obstacle::performAction(Player& player, const Position &currentPosition) {
 		cout << endl << "You ran into an obstacle! Moving backwards 3 spaces." << endl;
 		player.move(-3);	
 	}
+
+	return true;
 }
 
 
@@ -134,6 +133,8 @@ void Obstacle::performAction(Player& player, const Position &currentPosition) {
 Challenge::Challenge() {
 		char newChallenge[] = "Challenge: You will be solving a math problem. Answering correctly will result in moving forward 3 spaces. Answering incorrectly will move backwards 1 space.";
     setDescription(newChallenge);
+		char hint[] = "Hint: When adding two numbers, start from the rightmost digit and carry over if needed.";
+		setHint(hint);
 		
 		for (int i = 0; i < 100; i++) {
 			numbers[i] = rand() % 100 + 1;
@@ -144,11 +145,37 @@ Challenge::Challenge() {
   	num2 = numbers[index2];    
 }
 
+
+Challenge::Challenge(char * description, int spaces, char * hint) : Card(spaces, description) {
+	this->hint = new char[strlen(hint) + 1];
+	strcpy(this->hint, hint);
+
+}
+
+Challenge::Challenge(const Challenge& src) : Card(src), numbers(src.numbers), num1(src.num1), num2(src.num2), hint(nullptr) {
+	hint = new char[strlen(src.hint) + 1];
+  strcpy(hint, src.hint);	
+}
+
 Challenge::~Challenge() {
+	delete [] hint;
 	num1 = 0;
 	num2 = 0;
 	for (int i : numbers)
 		numbers[i] = 0;	
+}
+
+
+void Challenge::setHint(char * newHint) {
+	if (hint)
+		delete [] hint;
+
+	this->hint = new char[strlen(newHint) + 1];
+	strcpy(this->hint, newHint);
+}
+
+void Challenge::displayHint() const {
+	cout << "Hint: " << hint << endl;
 }
 
 
@@ -157,17 +184,20 @@ void Challenge::display() const {
 	cout << description << endl << endl;
 }
 
-Chance::Chance() : sides(0), forward(false) {}
 
-Chance::~Chance() {
-	sides = 0;
-	forward = false;
-}
 
-void Challenge::performAction(Player& player, const Position& currentPosition) {
+bool Challenge::performAction(Player& player, const Position& currentPosition) {
     if (currentPosition.isSkipped()) {
         cout << "Oh no! You have to skip this turn due to the position. Moving to next player's turn." << std::endl;
-        return;
+				return true;
+    }
+
+		char userChoice;
+    cout << "Would you like a hint? Enter 'Y' for yes or 'N' for no: ";
+    cin >> userChoice;
+
+    if (toupper(userChoice) == 'Y') {
+        displayHint();
     }
 
     int userAnswer;
@@ -176,12 +206,21 @@ void Challenge::performAction(Player& player, const Position& currentPosition) {
     if (userAnswer == num1 + num2) {
         cout << "Correct! Moving forward 3 spaces. " << endl;
         player.move(3);
+				return true;
     } else {
         cout << "Incorrect. Moving 1 space back." << endl;
         player.move(-1);
+				return true;
     }
 }
 
+
+Chance::Chance() : sides(0), forward(false), rolledSpaces(0) {}
+
+Chance::~Chance() {
+	sides = 0;
+	forward = false;
+}
 
 // Chance card class constructor
 Chance::Chance(int sides) : sides(sides) {
@@ -201,8 +240,9 @@ Chance::Chance(int sides) : sides(sides) {
 }
 
 
-void Chance::performAction(Player& player, const Position& currentPosition) {
+bool Chance::performAction(Player& player, const Position& currentPosition) {
 	player.move(spaces);
+	return true;
 }
 
 

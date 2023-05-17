@@ -12,14 +12,20 @@ using namespace std;
 class Challenge : public Card {
 public:
     Challenge();
+		Challenge(char * description, int spaces, char * hint);
 		~Challenge();
+		Challenge(const Challenge& src);
+		Challenge& operator=(const Challenge& other);
     void display() const override;
-		void performAction(Player&, const Position&) override;
+		bool performAction(Player&, const Position&) override;
+		void setHint(char * newHint);
+		void displayHint() const;
 
 private:
     array<int, 100> numbers;
 		int num1;
 		int num2;
+		char * hint;
 };
 
 #endif // CHALLENGE_H

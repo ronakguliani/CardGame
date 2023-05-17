@@ -23,7 +23,7 @@ public:
 
     void setSpaces(int spaces);
 
-		virtual void performAction(Player& player, const Position& currentPosition); 
+		virtual bool performAction(Player& player, const Position& currentPosition); 
 
     virtual void display() const;
 
